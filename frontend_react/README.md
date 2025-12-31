@@ -1,82 +1,55 @@
-# Lightweight React Template for KAVIA
+# Recipe Explorer (React SPA)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A modern single-page Recipe Explorer app with search, responsive recipe grid, and accessible recipe details modal.  
+Styled with the **Ocean Professional** theme (blue + amber accents, clean surfaces, subtle gradients).
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+- Header with prominent search (query synced to `?q=` in the URL)
+- Responsive recipe grid with cards (image placeholder if missing)
+- Recipe details modal (focus trap, Escape to close, click backdrop to close)
+- Loading skeleton + empty state + error message
+- Data layer that prefers an API if configured, otherwise uses local mock data
 
-## Getting Started
+## Configuration (Environment Variables)
 
-In the project directory, you can run:
+This app reads these variables (Create React App style) at build time:
 
-### `npm start`
+- **`REACT_APP_API_BASE`** (highest priority): Base URL for the recipes API (e.g. `http://localhost:8000`)
+- **`REACT_APP_BACKEND_URL`** (fallback): Alternative base URL for the API
+- **`REACT_APP_FEATURE_FLAGS`** (optional): JSON string, e.g. `{ "someFlag": true }`
+- **`REACT_APP_NODE_ENV`** (optional): Only used for informational/logging behavior; not required
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### API behavior
 
-### `npm test`
+If `REACT_APP_API_BASE` or `REACT_APP_BACKEND_URL` is set, the app will call:
 
-Launches the test runner in interactive watch mode.
+- `GET <API_BASE>/recipes?q=<query>`
 
-### `npm run build`
+Expected response format (recommended):
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Customization
-
-### Colors
-
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+```json
+{ "recipes": [ { "id": "1", "title": "...", "ingredients": ["..."], "instructions": ["..."] } ] }
 ```
 
-### Components
+Also supported:
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+- An array directly: `[ { ... }, { ... } ]`
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+If the API call fails for any reason, the UI shows a friendly error message and continues to function with mock data **only when no API base is configured**.
 
-## Learn More
+## Local Development
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+From `frontend_react/`:
 
-### Code Splitting
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+App runs on port **3000**.
 
-### Analyzing the Bundle Size
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- No backend is required for development: mock data is used automatically when API env vars are empty.
+- The search query is shareable via URL `/?q=pasta`.
+- Modal is keyboard accessible and uses focus trapping for good UX.
